@@ -1,0 +1,67 @@
+https://leetcode.com/problems/paint-house-ii/description/
+
+1. how to find previous minCost color? 
+a helper function to find the mincost color except color in this position. should count the situation if there are multiple minValue.
+2. finally, need to find the min Value from the last line of dp
+not from minvalue array
+
+class Solution {
+    public int minCostII(int[][] costs) {
+        if (costs == null || costs.length == 0 || costs[0].length == 0) {
+            return 0;
+        }
+        
+        int n = costs.length;
+        int color = costs[0].length;
+
+        int[][] dp = new int[n][color];
+        int[] min = new int[color];
+
+        for (int i = 0; i < color; i++) {
+            dp[0][i] = costs[0][i];
+        }
+        findMinColor(min, dp, 0);
+
+        int minCost = Integer.MAX_VALUE;
+        for(int i = 1; i < n; i++) {
+            for(int j = 0; j < color; j++) {
+                dp[i][j] = min[j] + costs[i][j];                
+            }
+            findMinColor(min, dp, i);
+        }
+        
+        for (int i = 0; i < color; i++) {
+            minCost = Math.min(minCost, dp[n-1][i]);
+        }
+        return minCost;
+    }
+
+    public void findMinColor(int[] min,
+                            int[][] dp,
+                            int row){
+        int minVal = Integer.MAX_VALUE;
+        int minIndex = 0;
+        int minCount = 0;
+        int secondmin = Integer.MAX_VALUE;
+        for (int i = 0; i < dp[0].length; i++) {
+            if (minVal > dp[row][i]) {
+                secondmin = minVal;
+                minVal = dp[row][i];
+                minIndex = i;
+                minCount = 1;
+            } else if (minVal == dp[row][i]) {
+                minCount++;
+            } else if (secondmin > dp[row][i]) {
+                secondmin = dp[row][i];
+            }
+        }
+
+        for (int i = 0; i < min.length; i++) {
+            if (minCount > 1 || i != minIndex) {
+                min[i] = minVal;
+            } else {
+                min[i] = secondmin;
+            }
+        }
+    }
+}
