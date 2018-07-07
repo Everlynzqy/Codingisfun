@@ -9,3 +9,4 @@ AB x BC = (Ax - Bx) * (Ay - By)  x  (Bx - Cx) * (By - Cy)
         = (Ax - Bx) * (By - Cy) - (Ay - By) * (Bx - Cx)
         
 A X B = x1*y2 - x2*y1
+叉乘的几何意义 ： A x B = |A||B|Sin(θ)
