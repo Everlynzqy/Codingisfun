@@ -1,9 +1,10 @@
-import java.util.HashMap;
-import java.util.Map;
-
+1. 
 /**
 实现一个stack，可以O(1)实现push， pull， getMiddle
 */
+import java.util.HashMap;
+import java.util.Map;
+
 // Mid is mid of index, not median
 public class MidStack {
 
@@ -23,24 +24,6 @@ public class MidStack {
 		ms.push(7);
 		ms.push(8);
 		System.out.println("6 : " + ms.peekMid());
-		
-		System.out.println("================");
-		
-		MidStack2 ms2 = new MidStack2();
-		ms2.push(1);
-		System.out.println("1 : " + ms2.peekMid());
-		ms2.push(2);
-		System.out.println("2 : " + ms2.popMid());
-		ms2.push(3);
-		ms2.push(4);
-		System.out.println("3 : " + ms2.pop());
-		System.out.println("4 : " + ms2.peekMid());
-		ms2.push(5);
-		ms2.push(6);
-		System.out.println("5 : " + ms2.popMid());
-		ms2.push(7);
-		ms2.push(8);
-		System.out.println("6 : " + ms2.peekMid());
 	}
 
 	Node dummy = new Node(-1);
