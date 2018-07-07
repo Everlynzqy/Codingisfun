@@ -1,6 +1,9 @@
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+实现一个stack，可以O(1)实现push， pull， getMiddle
+*/
 // Mid is mid of index, not median
 public class MidStack {
 
