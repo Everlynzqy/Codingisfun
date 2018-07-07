@@ -1,0 +1,11 @@
+https://leetcode.com/problems/convex-polygon/description/
+
+多边形判断凸包
+
+ABxBC For each set of three adjacent points A, B, C, find the cross product AB X BC. If the sign of
+      all the cross products is the same, the angles are all positive or negative (depending on the
+      order in which we visit them) so the polygon is convex.
+AB x BC = (Ax - Bx) * (Ay - By)  x  (Bx - Cx) * (By - Cy)
+        = (Ax - Bx) * (By - Cy) - (Ay - By) * (Bx - Cx)
+        
+A X B = x1*y2 - x2*y1
