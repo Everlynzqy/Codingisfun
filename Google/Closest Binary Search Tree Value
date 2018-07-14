@@ -1,1 +1,229 @@
+1个点 closest BST value
 
+/* 算法很简单，求出 lowerBound 和 upperBound。即 < target 的最大值和 >= target 的最小值。
+然后在两者之中去比较谁更接近，然后返回即可。
+
+时间复杂度为 O(h)，注意如果你使用 in-order traversal 的优化，
+时间复杂度会是 o(n) 并不是最优的。另外复杂度也不是 O(logn) 因为BST 并不保证树高是 logn 的。*/
+https://www.jiuzhang.com/solution/closest-binary-search-tree-value/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int closestValue(TreeNode root, double target) {
+        if (root == null) {
+            return 0;
+        }
+        
+        TreeNode lowerNode = lowerBound(root, target);
+        TreeNode upperNode = upperBound(root, target);
+        
+        if (lowerNode == null) {
+            return upperNode.val;
+        }
+        
+        if (upperNode == null) {
+            return lowerNode.val;
+        }
+        
+        if (target - lowerNode.val > upperNode.val - target) {
+            return upperNode.val;
+        }
+        
+        return lowerNode.val;
+    }
+    
+    // find the node with the largest value that smaller than target
+    private TreeNode lowerBound(TreeNode root, double target) {
+        if (root == null) {
+            return null;
+        }
+        
+        if (target <= root.val) {
+            return lowerBound(root.left, target);
+        }
+        
+        // root.val < target
+        TreeNode lowerNode = lowerBound(root.right, target);
+        if (lowerNode != null) {
+            return lowerNode;
+        }
+        
+        return root;
+    }
+    
+    // find the node with the smallest value that larger than or equal to target
+    private TreeNode upperBound(TreeNode root, double target) {
+        if (root == null) {
+            return null;
+        }
+        
+        if (root.val < target) {
+            return upperBound(root.right, target);
+        }
+        
+        // root.val >= target
+        TreeNode upperNode = upperBound(root.left, target);
+        if (upperNode != null) {
+            return upperNode;
+        }
+        
+        return root;
+    }
+    
+}
+
+
+Follow-up: k closest value:
+
+1.最优算法，时间复杂度 O(k + logn)，空间复杂度 O(logn)
+
+实现如下的子函数：
+getStack() => 在假装插入 target 的时候，看看一路走过的节点都是哪些，放到 stack 里，用于 iterate
+moveUpper(stack) => 根据 stack，挪动到 next node
+moveLower(stack) => 根据 stack, 挪动到 prev node
+有了这些函数之后，就可以把整个树当作一个数组一样来处理，只不过每次 i++ 的时候要用 moveUpper，i--的时候要用 moveLower
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public List<Integer> closestKValues(TreeNode root, double target, int k) {
+        List<Integer> values = new ArrayList<>();
+        
+        if (k == 0 || root == null) {
+            return values;
+        }
+        
+        Stack<TreeNode> lowerStack = getStack(root, target);
+        Stack<TreeNode> upperStack = new Stack<>();
+        upperStack.addAll(lowerStack);
+        if (target < lowerStack.peek().val) {
+            moveLower(lowerStack);
+        } else {
+            moveUpper(upperStack);
+        }
+        
+        for (int i = 0; i < k; i++) {
+            if (lowerStack.isEmpty() ||
+                   !upperStack.isEmpty() && target - lowerStack.peek().val > upperStack.peek().val - target) {
+                values.add(upperStack.peek().val);
+                moveUpper(upperStack);
+            } else {
+                values.add(lowerStack.peek().val);
+                moveLower(lowerStack);
+            }
+        }
+
+        return values;
+    }
+    
+    private Stack<TreeNode> getStack(TreeNode root, double target) {
+        Stack<TreeNode> stack = new Stack<>();
+        
+        while (root != null) {
+            stack.push(root);
+            
+            if (target < root.val) {
+                root = root.left;
+            } else {
+                root = root.right;
+            }
+        }
+        
+        return stack;
+    }
+    
+    public void moveUpper(Stack<TreeNode> stack) {
+        TreeNode node = stack.peek();
+        if (node.right == null) {
+            node = stack.pop();
+            while (!stack.isEmpty() && stack.peek().right == node) {
+                node = stack.pop();
+            }
+            return;
+        }
+        
+        node = node.right;
+        while (node != null) {
+            stack.push(node);
+            node = node.left;
+        }
+    }
+    
+    public void moveLower(Stack<TreeNode> stack) {
+        TreeNode node = stack.peek();
+        if (node.left == null) {
+            node = stack.pop();
+            while (!stack.isEmpty() && stack.peek().left == node) {
+                node = stack.pop();
+            }
+            return;
+        }
+        
+        node = node.left;
+        while (node != null) {
+            stack.push(node);
+            node = node.right;
+        }
+    }
+}
+
+2. 暴力方法。时间复杂度 O(n)，空间复杂度也是 O(n)
+class Solution {
+    public List<Integer> closestKValues(TreeNode root, double target, int k) {
+        List<Integer> values = new ArrayList<>();
+        
+        traverse(root, values);
+        
+        int i = 0, n = values.size();
+        for (; i < n; i++) {
+            if (values.get(i) >= target) {
+                break;
+            }
+        }
+        
+        if (i >= n) {
+            return values.subList(n - k, n);
+        }
+        
+        int left = i - 1, right = i;
+        List<Integer> result = new ArrayList<>();
+        for (i = 0; i < k; i++) {
+            if (left >= 0 && (right >= n || target - values.get(left) < values.get(right) - target)) {
+                result.add(values.get(left));
+                left--;
+            } else {
+                result.add(values.get(right));
+                right++;
+            }
+        }
+        
+        return result;
+    }
+    
+    private void traverse(TreeNode root, List<Integer> values) {
+        if (root == null) {
+            return;
+        }
+        
+        traverse(root.left, values);
+        values.add(root.val);
+        traverse(root.right, values);
+    }
+}
+先用 inorder traversal 求出中序遍历
+找到第一个 >= target 的位置 index
+从 index-1 和 index 出发，设置两根指针一左一右，获得最近的 k 个整数
