@@ -1,0 +1,134 @@
+1. cracking the safe
+//贪心 + permutation DFS
+//类似于permutation: 根据题意，最短的解锁string要尽可能的增加重叠， 所以对于每个substring， 只找最后n-1位，遍历1-k-1， 是否有可以添加的可能解。
+//DFS返回值： true/false; 需要提前终止结果，一旦找到就结束，不需要找到所有的可能性。
+//递归函数的定义：以stringbuilder sb为前缀是否可以找到最短的解锁string
+//递归函数的拆解：枚举sb的后一位，看最后n-1位和当前的i是否能够组成一个没有枚举过的数（需要visited hashset）
+//递归函数的出口：hashset包含所有pow(k,n)的可能解
+
+class Solution {
+    public String crackSafe(int n, int k) {
+        // 1. the total number pow(k-1, n)
+        // 2. dfs from 00 and find if there is possibility to find a solution where contain all pow(k-1, n)        
+        int total = (int) Math.pow(k, n);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            sb.append("0");
+        }
+        
+        HashSet<String> set = new HashSet<>();
+        set.add(sb.toString());
+        
+        dfs(sb, set, total, n, k);
+        
+        return sb.toString();
+    }
+    
+    public boolean dfs(
+                   StringBuilder sb,
+                   HashSet<String> set,
+                   int total,
+                   int n,
+                   int k) {
+        if (set.size() == total) {
+            return true;
+        }
+        String prev = sb.substring(sb.length() - n + 1, sb.length());
+        for (int i = 0; i < k; i++) {
+            String cur = prev + i;
+            if (set.contains(cur)) {
+                continue;
+            }
+            set.add(cur);
+            sb.append(i);
+            if(dfs(sb, set, total, n, k)) {
+                return true;
+            }
+            set.remove(cur);
+            sb.delete(sb.length() - 1, sb.length());
+        }
+        
+        return false;
+    }
+}
+
+2. next closest time
+// 枚举所有的可能解，time的四个位的digit只可能是当前time中的值
+// 1. 找出 结果中的所有的digit放入arraylist中
+// 2. 根据arraylist中的digit, 遍历所有可能的时间组合（hr in [0, 24] and mim in [0, 60]）
+// 3. 递归出口， 找到可行解，比较全局min diff
+
+class Solution {
+    int min = Integer.MAX_VALUE;
+    String res = "";
+    // how to use int or arraylist
+    // string should not int + int, it will return actually int+int value
+    // it should be next! might be next day
+    // corner case: digits are all the same
+    public String nextClosestTime(String time) {
+        // find all digits
+        // xx:xx [0-2][0-9] : [0-5][0-9]
+        // dfs all results and compare wity current time
+        ArrayList<Integer> digits = findDigits(time);
+        if (digits.size() == 1) {
+            return time;
+        }
+        String[] val = time.split(":");
+        int hour = Integer.parseInt(val[0]);
+        int min = Integer.parseInt(val[1]);
+        int value = hour * 60 + min;
+        dfs(digits, 0, value, new int[4]);
+        return res;
+    }
+    
+    public void dfs(ArrayList<Integer> digits,
+                   int index,
+                   int value,
+                   int[] curtime){
+        if (index == 4) {
+            int curval = (curtime[0] * 10 + curtime[1]) * 60 
+                + curtime[2] * 10 + curtime[3];
+            if (curval == value) {
+                return;
+            }
+            int diff = (curval < value) ? 24 * 60 - value + curval : curval - value;
+            if (diff < min) {
+                res = curtime[0] + "" + curtime[1] + ":" + curtime[2] + "" + curtime[3];
+                min = diff;
+            }
+            return;
+        }
+        
+        for (int i = 0; i < digits.size(); i++) {
+            curtime[index] = digits.get(i);
+            if (index == 1) {
+                int h = curtime[0] * 10 + curtime[1];
+                if (h > 24 || h < 0) {
+                    continue;
+                }
+            } else if (index == 3) {
+                int m = curtime[2] * 10 + curtime[3];
+                if (m >= 60 || m < 0) {       
+                    continue;
+                }
+            }    
+            dfs(digits, index+1, value, curtime);
+        }
+        return;
+    }
+    
+    public ArrayList<Integer> findDigits(String time){
+        HashSet<Integer> list = new HashSet<Integer>();
+        char[] carray = time.toCharArray();
+        for (char c : carray) {
+            if (c == ':') {
+                continue;
+            }
+            if (!list.contains(c - '0')) {
+                list.add(c - '0');
+            }
+        }
+        
+        return new ArrayList<Integer>(list);
+    }
+}
