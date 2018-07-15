@@ -133,9 +133,10 @@ class Solution {
     }
 }
 
-2. word square
+3. word square
 // regular DFS TLE.
 // need to create a prefix to map that will increase the prefix check or using Trie;
+// 检查当前的单词和之前的Subset中组成的单词是否后面的每个k column的前缀都有可以选择的单词。优化ischeck函数
 public class Solution {
      class TrieNode {
         List<String> startWith;
