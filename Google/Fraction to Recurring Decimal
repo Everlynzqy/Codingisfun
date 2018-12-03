@@ -1,4 +1,24 @@
-https://leetcode.com/problems/fraction-to-recurring-decimal/description/
+Problem description
+/*大致思路清晰但是写不出来， 难点：对int型的处理overflow and negative integer*/
+
+Given two integers representing the numerator and denominator of a fraction, return the fraction in string format.
+
+If the fractional part is repeating, enclose the repeating part in parentheses.
+
+Example 1:
+
+Input: numerator = 1, denominator = 2
+Output: "0.5"
+Example 2:
+
+Input: numerator = 2, denominator = 1
+Output: "2"
+Example 3:
+
+Input: numerator = 2, denominator = 3
+Output: "0.(6)"
+
+Link: https://leetcode.com/problems/fraction-to-recurring-decimal/description/
 
 /*
 	Thoughts:
@@ -13,7 +33,8 @@ https://leetcode.com/problems/fraction-to-recurring-decimal/description/
 Note:
 Have to take int overflow INT_MAX, INT_MIN....
 */
-//Optimized code:
+
+
 public class Solution {
     public String fractionToDecimal(int numerator, int denominator) {
         long nume = Math.abs((long)numerator);
