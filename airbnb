@@ -168,7 +168,8 @@ public class ImplementQueuewithFixedSizeofArrays {
     public static class UnitTest {
         @Test
         public void test1() {
-            QueueWithFixedArray queue = new ImplementQueuewithFixedSizeofArrays().new QueueWithFixedArray(5);
+            QueueWithFixedArray queue = 
+            new ImplementQueuewithFixedSizeofArrays().new QueueWithFixedArray(5);
             queue.offer(1);
             queue.offer(2);
             int res = queue.poll();
@@ -189,13 +190,16 @@ public class ImplementQueuewithFixedSizeofArrays {
 }
 
 3 List of List Iterator
-Given an array of arrays, implement an iterator class to allow the client to traverse and remove elements in the array list.
+Given an array of arrays, implement an iterator class to allow the client to 
+traverse and remove elements in the array list.
 
 This iterator should provide three public class member functions:
 
 boolean hasNext() return true if there is another element in the set
 int next() return the value of the next element in the array
-void remove() remove the last element returned by the iterator. That is, remove the element that the previous next() returned. This method can be called only once per call to next(), otherwise an exception will be thrown.
+void remove() remove the last element returned by the iterator. That is, 
+remove the element that the previous next() returned. 
+This method can be called only once per call to next(), otherwise an exception will be thrown.
 
 package list_of_list_iterator;
 
@@ -398,9 +402,16 @@ public class ListofListIterator {
 }
 
 4 Display Page (Pagination)
-Given an array of CSV strings representing search results, output results sorted by a score initially. A given host may have several listings that show up in these results. Suppose we want to show 12 results per page, but we don’t want the same host to dominate the results.
+Given an array of CSV strings representing search results, 
+output results sorted by a score initially. 
+A given host may have several listings that show up in these results. 
+Suppose we want to show 12 results per page, but we don’t want the same host to 
 
-Write a function that will reorder the list so that a host shows up at most once on a page if possible, but otherwise preserves the ordering. Your program should return the new array and print out the results in blocks representing the pages.
+dominate the results.
+
+Write a function that will reorder the list so that a host shows up at most once on a page 
+if possible, but otherwise preserves the ordering. Your program should return the 
+new array and print out the results in blocks representing the pages.
 
 Given an array of csv strings, output results separated by a blank line.
 
@@ -583,7 +594,9 @@ public class DisplayPage {
 
 
 5 Travel Buddy
-I have a wish list of cities that I want to visit to, my friends also have city wish lists that they want to visit to. If one of my friends share more than 50% (over his city count in his wish list), he is my buddy.
+I have a wish list of cities that I want to visit to, my friends also have city 
+wish lists that they want to visit to. If one of my friends share more than 50% 
+(over his city count in his wish list), he is my buddy.
 
 Given a list of city wish list, output buddy list sorting by similarity.
 
@@ -801,7 +814,8 @@ public class FileSystem {
 
 
 7 Palindrome Pairs
-Given a list of unique words, find all pairs of distinct indices (i, j) in the given list, so that the concatenation of the two words, i.e. words[i] + words[j] is a palindrome.
+Given a list of unique words, find all pairs of distinct indices (i, j) in the 
+given list, so that the concatenation of the two words, i.e. words[i] + words[j] is a palindrome.
 
 package palindrome_pairs;
 
@@ -832,8 +846,11 @@ public class PalindromePairs {
                 while (left <= right) {
                     String s = words[i].substring(left, right);
                     Integer j = map.get(new StringBuilder(s).reverse().toString());
-                    if (j != null && i != j && isPalindrome(words[i].substring(left == 0 ? right : 0, left == 0 ? words[i].length() : left)))
-                        res.add(Arrays.asList(left == 0 ? new Integer[]{i, j} : new Integer[]{j, i}));
+                    if (j != null && i != j && 
+                    isPalindrome(words[i].substring(left == 0 ? 
+                    right : 0, left == 0 ? words[i].length() : left)))
+                        res.add(Arrays.asList(left == 0 ? 
+                        new Integer[]{i, j} : new Integer[]{j, i}));
                     if (right < words[i].length()) right++;
                     else left++;
                 }
@@ -886,7 +903,8 @@ public class PalindromePairs {
 
         private void search(String[] words, int i, TrieNode root, List<List<Integer>> list) {
             for (int j = 0; j < words[i].length(); j++) {
-                if (root.index >= 0 && root.index != i && isPalindrome(words[i], j, words[i].length() - 1)) {
+                if (root.index >= 0 && root.index != i && 
+                isPalindrome(words[i], j, words[i].length() - 1)) {
                     list.add(Arrays.asList(i, root.index));
                 }
 
@@ -951,7 +969,8 @@ public class PalindromePairs {
 }
 
 8 Find Median in Large Integer File of Integers
-Find the median from a large file of integers. You can not access the numbers by index, can only access it sequentially. And the numbers cannot fit in memory.
+Find the median from a large file of integers. You can not access the 
+numbers by index, can only access it sequentially. And the numbers cannot fit in memory.
 
 package find_median_in_large_file_of_integers;
 
@@ -1016,7 +1035,8 @@ public class FindMedianinLargeIntegerFileofIntegers {
 }
 
 9 IP Range to CIDR
-Given an IPv4 IP address p and an integer n, return a list of CIDR strings that most succinctly represents the range of IP addresses from p to (p + n).
+Given an IPv4 IP address p and an integer n, return a list of CIDR 
+strings that most succinctly represents the range of IP addresses from p to (p + n).
 
 package ip_range_to_cidr;
 
@@ -1080,7 +1100,8 @@ public class IPRangetoCIDR {
                 // if the currRangeMask is larger than curMask
                 // which means the numbers of IPs from start to end is smaller than mask range
                 // so we can't use as many as bits we want to mask the start IP to avoid exceed the end IP
-                // Otherwise, if currRangeMask is smaller than curMask, which means number of IPs is larger than mask range
+                // Otherwise, if currRangeMask is smaller than curMask, which 
+                // means number of IPs is larger than mask range
                 // in this case we can use curMask to mask as many as IPs from start we want.
                 curMask = Math.max(currRangeMask, curMask);
 
@@ -1260,22 +1281,29 @@ public class CSVParser {
 
 
 11 Text Justification
-Given an array of words and a length L, format the text such that each line has exactly L characters and is fully (left and right) justified.
+Given an array of words and a length L, format the text such that each line has exactly 
+L characters and is fully (left and right) justified.
 
-You should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra spaces ' ' when necessary so that each line has exactly L characters.
+You should pack your words in a greedy approach; that is, pack as many 
+words as you can in each line. Pad extra spaces ' ' when necessary so that 
+each line has exactly L characters.
 
-Extra spaces between words should be distributed as evenly as possible. If the number of spaces on a line do not divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the right.
+Extra spaces between words should be distributed as evenly as possible. 
+If the number of spaces on a line do not divide evenly between words, 
+the empty slots on the left will be assigned more spaces than the slots on the right.
 
 For the last line of text, it should be left justified and no extra space is inserted between words.
 
 
 
 12 Regular Expression
-Implement a simple regex parser which, given a string and a pattern, returns a boolean indicating whether the input matches the pattern.
+Implement a simple regex parser which, given a string and a pattern, 
+returns a boolean indicating whether the input matches the pattern.
 
 By simple, we mean that the regex can only contain special character:
 
-* (star) The star means what you'd expect, that there will be zero or more of previous character in that place in the pattern.
+* (star) The star means what you'd expect, that there will be zero or 
+more of previous character in that place in the pattern.
 . (dot) The dot means any character for that position.
 + (plus). The plus means one or more of previous character in that place in the pattern.
 
@@ -1298,11 +1326,13 @@ public class RegularExpression {
                 return source.charAt(0) == pattern.charAt(0);
             }
 
-            if (source.length() != 0 && (pattern.charAt(0) == '.' || pattern.charAt(0) == source.charAt(0))) {
+            if (source.length() != 0 && (pattern.charAt(0) == '.' 
+            || pattern.charAt(0) == source.charAt(0))) {
                 if (pattern.charAt(1) == '*') {
                     return regMatch(source.substring(1), pattern) || regMatch(source, pattern.substring(2));
                 } else if (pattern.charAt(1) == '+') {
-                    return regMatch(source.substring(1), pattern.substring(2)) || regMatch(source.substring(1), pattern.substring(2));
+                    return regMatch(source.substring(1), pattern.substring(2)) 
+                    || regMatch(source.substring(1), pattern.substring(2));
                 } else {
                     return regMatch(source.substring(1), pattern.substring(1));
                 }
@@ -1368,7 +1398,8 @@ public class RegularExpression {
 
 
 13 Water Drop/Water Land/Pour Water
-Input is a array represent how the height of water is at each position, the number of water will be poured, and the pour position. Print the land after all water are poured.
+Input is a array represent how the height of water is at each position, 
+the number of water will be poured, and the pour position. Print the land after all water are poured.
 
 Example: input land height int[]{5,4,2,1,3,2,2,1,0,1,4,3} The land is looks ike:
 
@@ -1495,7 +1526,9 @@ public class WaterLand {
 
 
 14 Hilbert Curve
-Given (x, y, iter), in which (x, y) is position at x-axis and y-axis, and iter is how many iterations will be. Output is in iteration iter, how many steps are required to move from (0, 0) to (x, y) in iteration iter.
+Given (x, y, iter), in which (x, y) is position at x-axis and y-axis, and 
+iter is how many iterations will be. Output is in iteration iter, 
+how many steps are required to move from (0, 0) to (x, y) in iteration iter.
 
 
 package hilbert_curve;
@@ -1552,7 +1585,8 @@ Input (army_name, location, action())
 
 action() could be:
 
-move(new_location) then army_name to new_location, If there is an army at new_location, then company strength of two aramy:
+move(new_location) then army_name to new_location, If there is an army 
+at new_location, then company strength of two aramy:
 The army have higher strength stay at new_location, the lower army is disappeared.
 If two army have the same strength, both are disppeared.
 hold() stay at the same location
@@ -1560,7 +1594,8 @@ support(army_name) supoort another army. The supported army have one more streng
 The army's strength are intialized as the same.
 
 16 Meeting Time
-Input is a number of meetings (start_time, end_time)。 Output is a number of time intervals (start_time, end_time), where there is no meetings.
+Input is a number of meetings (start_time, end_time)。 Output is a number 
+of time intervals (start_time, end_time), where there is no meetings.
 
 For exmaple, input is [[1, 3], [6, 7]], [[2, 4]], [[2, 3], [9, 12]] ]
 
@@ -1630,7 +1665,8 @@ public class MeetingTime {
                     count--;
                     if (count == intervals.size() - k && i < points.size() - 1) {
                         availableStart = point.time;
-                    } else if (availableStart != null && i == points.size() - 1 && count <= intervals.size() - k) {
+                    } else if (availableStart != null && 
+                    i == points.size() - 1 && count <= intervals.size() - k) {
                         res.add(new Interval(availableStart, point.time));
                         availableStart = null;
                     }
@@ -1670,7 +1706,10 @@ public class MeetingTime {
 
 
 17 Round Prices
-Given an array of numbers A = [x1, x2, ..., xn] and T = Round(x1+x2+... +xn). We want to find a way to round each element in A such that after rounding we get a new array B = [y1, y2, ...., yn] such that y1+y2+...+yn = T where yi = Floor(xi) or Ceil(xi), ceiling or floor of xi.
+Given an array of numbers A = [x1, x2, ..., xn] and T = Round(x1+x2+... +xn). 
+We want to find a way to round each element in A such that 
+after rounding we get a new array B = [y1, y2, ...., yn] such that 
+y1+y2+...+yn = T where yi = Floor(xi) or Ceil(xi), ceiling or floor of xi.
 
 We also want to minimize sum |x_i-y_i|
 
@@ -1892,7 +1931,10 @@ public class RoundPrices {
 }
 
 18 Sliding Game
-You're given a 3x3 board of a tile puzzle, with 8 tiles numbered 1 to 8, and an empty spot. You can move any tile adjacent to the empty spot, to the empty spot, creating an empty spot where the tile originally was. The goal is to find a series of moves that will solve the board, i.e. get [ [1, 2, 3], [4, 5, 6], [7, 8, - ]…
+You're given a 3x3 board of a tile puzzle, with 8 tiles numbered 1 to 8, 
+and an empty spot. You can move any tile adjacent to the empty spot, 
+to the empty spot, creating an empty spot where the tile originally was. 
+The goal is to find a series of moves that will solve the board, i.e. get [ [1, 2, 3], [4, 5, 6], [7, 8, - ]…
 
 package sliding_game;
 
@@ -2093,7 +2135,11 @@ public class SlidingGame {
 
 
 19 Maximum Number of Nights You Can Accommodate
-Given a set of numbers in an array which represent number of consecutive nights of AirBnB reservation requested, as a host, pick the sequence which maximizes the number of days of occupancy, at the same time, leaving at least 1 day gap in between bookings for cleaning. Problem reduces to finding max-sum of non-consecutive array elements.
+Given a set of numbers in an array which represent number of consecutive 
+nights of AirBnB reservation requested, as a host, pick the sequence 
+which maximizes the number of days of occupancy, at the same time, 
+leaving at least 1 day gap in between bookings for cleaning. 
+Problem reduces to finding max-sum of non-consecutive array elements.
 
 package maximum_number_of_nights_you_can_accommodate;
 
@@ -2144,7 +2190,10 @@ public class MaximumNumberofNightsYouCanAccommodate {
 }
 
 20 Find Case Combinations of a String
-Find all the combinations of a string in lowercase and uppercase. For example, string "ab" >>> "ab", "Ab", "aB", "AB". So, you will have 2^n (n = number of chars in the string) output strings. The goal is for you to test each of these strings and see if it matchs a hidden string.
+Find all the combinations of a string in lowercase and uppercase. 
+For example, string "ab" >>> "ab", "Ab", "aB", "AB". So, you 
+will have 2^n (n = number of chars in the string) output strings. 
+The goal is for you to test each of these strings and see if it matchs a hidden string.
 
 package find_case_combinations_of_a_string;
 
@@ -2198,7 +2247,8 @@ public class FindCaseCombinationsofaString {
 
 
 21 Menu Combination Sum
-Given a menu (list of items prices), find all possible combinations of items that sum a particular value K. (A variation of the typical 2sum/Nsum questions).
+Given a menu (list of items prices), find all possible combinations of 
+items that sum a particular value K. (A variation of the typical 2sum/Nsum questions).
 
 package menu_combination_sum;
 
@@ -2390,7 +2440,8 @@ public class KEditDistance {
 
 
 23 Boggle Game
-Given 2d matrix of letters, and a word dictionary, find a path which has largest number of words (existed inside the dictionary).
+Given 2d matrix of letters, and a word dictionary, find a path which has 
+largest number of words (existed inside the dictionary).
 
 package boggle_game;
 
@@ -2586,7 +2637,9 @@ public class BoggleGame {
 
 
 24 Minimum Cost with At Most K Stops
-Given a flight itinerary consisting of starting city, destination city, and ticket price (2d list) - find the optimal price flight path to get from start to destination. (A variation of Dynamic Programming Shortest Path)
+Given a flight itinerary consisting of starting city, destination city, 
+and ticket price (2d list) - find the optimal price flight path to 
+get from start to destination. (A variation of Dynamic Programming Shortest Path)
 
 package minimum_cost_with_at_most_k_stops;
 
@@ -2642,7 +2695,8 @@ public class MinimumCostwithAtMostKStops {
 
                     for (String next : curr.nextNodes.keySet()) {
                         int nextCost = currCost + curr.nextNodes.get(next);
-                        if (nextCost < nodes.get(next).minCost && (stops < k || stops == k && next.equals(target))) {
+                        if (nextCost < nodes.get(next).minCost && 
+                        (stops < k || stops == k && next.equals(target))) {
                             q.offer(next);
                             cost.offer(nextCost);
                         }
@@ -2686,7 +2740,10 @@ public class MinimumCostwithAtMostKStops {
 
 
 25 String Pyramids Transition Matrix
-Given a list of leaf nodes in a pyramid, and a map which indicates what's the possible parent node given a left and right node. Return true if the one of leaf node could turn into the root node, Otherwise, return false. For example:
+Given a list of leaf nodes in a pyramid, and a map which indicates 
+what's the possible parent node given a left and right node. 
+Return true if the one of leaf node could turn into the root node, 
+Otherwise, return false. For example:
 
      root
      / \
@@ -2803,7 +2860,8 @@ public class StringPyramidsTransitionMatrix {
 
 
 26 Finding Ocean
-Given: An array of strings where L indicates land and W indicates water, and a coordinate marking a starting point in the middle of the ocean.
+Given: An array of strings where L indicates land and W indicates water, 
+and a coordinate marking a starting point in the middle of the ocean.
 
 Challenge: Find and mark the ocean in the map by changing appropriate Ws to Os.
 
@@ -2927,7 +2985,8 @@ public class FindingOcean {
 
 
 27 Preference List
-Given a list of everyone's preferred city list, output the city list following the order of everyone's preference order.
+Given a list of everyone's preferred city list, output the city list 
+following the order of everyone's preference order.
 
 For example, input is [[3, 5, 7, 9], [2, 3, 8], [5, 8]]. One of possible output is [2, 3, 5, 8, 7, 9].
 
@@ -3057,7 +3116,9 @@ public class PreferenceList {
 
 
 28 Minimum Vertices to Traverse Directed Graph
-Given a directed grapjh, represented in a two dimension array, output a list of points that can be used to travese every points with the least number of visited vertices.
+Given a directed grapjh, represented in a two dimension array, output a 
+list of points that can be used to travese every points with the 
+least number of visited vertices.
 
 package minimum_vertices_to_traverse_directed_graph;
 
@@ -3070,7 +3131,8 @@ import static org.junit.Assert.*;
 public class MinimumVerticestoTraverseDirectedGraph {
     /*
         Minimum Vertices to Traverse Directed Graph - DFS
-        https://cs.stackexchange.com/questions/1698/find-the-minimal-number-of-runs-to-visit-every-edge-of-a-directed-graph
+        https://cs.stackexchange.com/questions/1698
+        /find-the-minimal-number-of-runs-to-visit-every-edge-of-a-directed-graph
         AirBnB Interview Question
      */
     public class Solution {
@@ -3159,7 +3221,8 @@ public class MinimumVerticestoTraverseDirectedGraph {
             ////    7[0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
             ////    8[0, 0, 0, 0, 0, 0, 0, 1, 0, 0]
             ////    9[0, 0, 0, 1, 0, 0, 1, 0, 0, 0]
-            edges = new int[][]{{2, 9}, {3, 3}, {3, 5}, {3, 7}, {4, 8}, {5, 8}, {6, 6}, {7, 4}, {8, 7}, {9, 3}, {9, 6}};
+            edges = new int[][]{{2, 9}, {3, 3}, {3, 5}, {3, 7}, {4, 8}, 
+            {5, 8}, {6, 6}, {7, 4}, {8, 7}, {9, 3}, {9, 6}};
             res = sol.getMin(edges, 10);
             System.out.println(res);
             assertEquals(3, res.size());
@@ -3168,7 +3231,9 @@ public class MinimumVerticestoTraverseDirectedGraph {
 }
 
 29 10 Wizards
-There are 10 wizards, 0-9, you are given a list that each entry is a list of wizards known by wizard. Define the cost between wizards and wizard as square of different of i and j. To find the min cost between 0 and 9.
+There are 10 wizards, 0-9, you are given a list that each entry is a 
+list of wizards known by wizard. Define the cost between wizards and 
+wizard as square of different of i and j. To find the min cost between 0 and 9.
 
 For example:
 
