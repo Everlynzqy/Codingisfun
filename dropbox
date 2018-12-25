@@ -1,0 +1,884 @@
+
+
+1. letter combination of a phone number
+
+public class Solution{
+	private static final String[] KEYS = new String[]{"","","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
+
+	public List<String> letterCombinations(String digits){
+		List<String> res = new ArrayList<>();
+		if(digits == null || digits.length() == 0) return res;
+		backtrack(res, digits, "", 0);
+		return res;
+	}
+
+	private void backtrack(List<String> res, String digits, String tmp, int pos){
+		if(pos == digits.length()){ // We have found a solution
+			res.add(new String(tmp));
+			return;
+		}
+
+		String letters = KEYS[digits.charAt(pos) - '0'];
+
+		for(int i = 0; i < letters.length(); i++){
+			backtrack(res, digits, tmp+letters.charAt(i), pos+1);
+		}
+
+	}
+}
+
+
+2.Combination sum
+// Let's assume sodas are sold in packages of 1, 2, 6, 12, 24
+// e.g. if N = 10, you could buy 1 x 10,  6 + 2 + 2, 6 + 1 + 1 + 1 + 1, ....
+// input : N
+// output : all possible combinations, for instance N=10 { {1,1,...,1}, {6,2,2}, {6,1,1,1,1}, {6,2,1,1}, {2,1,..,1}, .... } (don't include {2,2,6} since we have {6,2,2})
+
+//combination sum (递归的时间复杂，如何减少递归的层数, dfs时间复杂度O(n!), 还要会用DP写)
+
+public class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+		if(candidates == null) return res;
+		backtrack(res, new ArrayList<>(), candidates, target, 0);
+
+		return res;
+	}
+
+	private void backtrack(List<List<Integer>> res, List<Integer> tmpList, int[] candidates, int target, int start){
+		if(target < 0) return;
+		else if(target == 0) // We have found a solution
+			res.add(new ArrayList<>(tmpList));
+			
+		else{
+			for(int i = start; i < candidates.length; i++){
+				tmpList.add(candidates[i]);
+				backtrack(res, tmpList, candidates, target-candidates[i], i); // Not i+1 because we can reuse the same element
+				tmpList.remove(tmpList.size()-1);
+			}
+		}
+		
+    }
+}
+
+289. Game of life
+// Easy version: Build a new board, using extra space
+// time O(m*n), space O(m*n)
+public class Solution{
+	public void gameOfLife(int[][] board){
+		if(board == null || board[0].length == 0) return;
+
+		int m = board.length; int n = board[0].length;
+		int[][] newBoard = new int[m][n];
+
+		for(int i = 0; i < m; i++){
+			for(int j = 0; j < n; j++){
+				int lives = countLives(board, m, n, i, j);
+
+				// under and over population
+				if(board[i][j] == 1 && (lives < 2 || lives > 3))
+					newBoard[i][j] = 0;
+				// Lives on to next generation
+				if(board[i][j] == 1 && lives >=2 && lives <=3)
+					newBoard[i][j] = 1;
+				// Reproduction
+				if(board[i][j] == 0 && lives == 3)
+					newBoard[i][j] = 1;
+			}
+		}
+
+		// Update the board
+		for(int i = 0; i < m; i++)
+			for(int j = 0; j < n; j++)
+				board[i][j] = newBoard[i][j];
+
+	}
+
+	// Helper function that counts the numer of lives in neighbour cells
+	private int countLives(int[][] board, int m, int n, int i, int j){
+		int lives = 0;
+
+		for(int x = Math.max(i-1, 0); x <= Math.min(i+1,m-1); x++)
+			for(int y = Math.max(j-1,0); y <= Math.min(j+1,n-1); y++)
+				lives += board[x][y];
+
+		lives -= board[i][j];
+		return lives;
+	}
+}
+
+
+//<---------------------------------------------------------------------------------------------------------------------------------------->
+// In place, use two bits to store (next state, current state)
+// time O(m*n), space O(m*n)
+public class Solution{
+	public void gameOfLife(int[][] board){
+		if(board == null || board[0].length == 0) return;
+
+		int m = board.length;
+		int n = board[0].length;
+
+		// Loop through each cell and set the next state
+		// By default the 2nd bit is 0, so we only need to consider when 2nd bit is not zero
+		for(int i = 0; i < m; i++){
+			for(int j = 0; j < n; j++){
+				int lives = countLives(board, m, n, i, j);
+				if(board[i][j] == 1 && (lives == 2 || lives == 3)) // (0,1) ---> (1,1)
+					board[i][j] = 3;
+				if(board[i][j] == 0 && lives == 3) // (0,0) ---> (1,0)
+					board[i][j] = 2;
+			}
+		}
+
+		// Update the board into new state
+		for(int i = 0; i < m; i++)
+			for(int j = 0; j < n; j++)
+				board[i][j] >>= 1;
+
+	}
+
+	// Helper function that counts the lives in the eight neighbour cells
+	private int countLives(int[][] board, int m, int n, int i, int j){
+		int lives = 0;
+
+		for(int x = Math.max(0, i-1); x <= Math.min(m-1,i+1); x++)
+			for(int y = Math.max(0, j-1); y <= Math.min(n-1, j+1); y++)
+				lives += board[i][j] & 1; // current state
+
+		lives -= board[i][j] & 1;
+		return lives;
+	}
+}
+
+//<---------------------------------------------------------------------------------------------------------------------------------------->
+//Follow up: what if the board size is very large, say 100 million * 100 million? We have to store the board data on local disk.
+// Idea: we do not store the whole board. We only store the live cells in a set and other cells are dead by default.
+// We read in the board data line by line and compute the new cell state using 3 lines each time. Then throw away the top line and read in a new line.
+// I/O API: int[] readLine(), void writeLine(int[] array)
+public class Solution{
+	public void gameOfLife(){
+		int[] prev = null, cur = null, next = null;
+		int[] pointer = null;
+
+		while((pointer = readLine()) != null){
+			if(cur == null){
+				cur = pointer;
+				continue;
+			}
+
+			if(next == null) next = pointer;
+
+			// First row
+			if(prev == null){
+				int[][] tmpBoard = new int[2][];
+				tmpBoard[0] = cur.clone();
+				tmpBoard[1] = next.clone();
+				int[][] nextStateBoard = updateBoard(tmpBoard);
+				writeLine(nextStateBoard[0]);
+			}
+
+			else{
+				int[][] tmpBoard = new int[3][];
+				tmpBoard[0] = prev.clone();
+				tmpBoard[1] = cur.clone();
+				tmpBoard[2] = next.clone();
+				int[][] nextStateBoard = updateBoard(tmpBoard);
+				writeLine(nextStateBoard[1]);
+			}
+
+			prev = cur;
+			cur = next;
+			next = null;
+		}
+
+		// Last row
+		int[][] tmpBoard = new int[2][];
+		tmpBoard[0] = prev.clone();
+		tmpBoard[1] = cur.clone();
+		int[][] nextStateBoard = updateBoard(tmpBoard);
+		writeLine(nextStateBoard[1]);
+	}
+
+	public class Coord{
+		int x;
+		int y;
+		public Coord(int x, int y){
+			this.x = x;
+			this.y = y;
+		}
+
+		public boolean equals(Object o){
+			return o instanceOf Coord && ((Coord) o).x == x && ((Coord) o).y == y;
+		}
+
+		public int hashCode(){
+			int hashCode = 1;
+			hashCode = hashCode * 31 + x;
+			hashCode = hashCode * 31 + y;
+
+			return hashCode;
+		}
+	}
+
+	// Private helper function that update the board state
+	private int[][] updateBoard(int[][] board){
+		if(board == null || board.length == 0) return board;
+
+		int m = board.length; int n = board[0].length;
+
+		Set<Coord> live = new hashSet<>();
+
+		// Find the live cell in current state
+		for(int i = 0; i < m; i++)
+			for(int j = 0; j < n; j++)
+				if(board[i][j] == 1) live.add(new Coord(i,j));
+
+		lives = updateLives(lives, m, n);
+
+		// Update board
+		for(int i = 0; i < m; i++)
+			for(int j = 0; j < n; j++)
+				board[i][j] = live.contains(new Coord(i,j)) ? 1:0;
+ 	}
+
+ 	// Private helper that computes the live cells in the next state given the current state
+ 	private Set<Coord> updateLive(Set<Coord> lives, int m, int n){
+ 		Map<Coord, Integer> neighbours = new HashMap<>();
+
+ 		// Update the number of live neighbours of each cell
+ 		for(Coord cell : lives){
+ 			for(int i = Math.max(0, cell.x-1); i <= Math.min(m-1, cell.x+1)){
+ 				for(int j = Math.max(0, cell.y-1); j <= Math.min(n-1, cell.y+1)){
+ 					if(i == cell.x && j == cell.y) continue;
+ 					Coord c = new Coord(i,j);
+
+ 					if(neighbours.containsKey(c))
+ 						neighbours.put(c, neighbours.get(c)+1);
+ 					else
+ 						neighbours.put(c,1);
+ 				}
+ 			}
+ 		}
+
+ 		// Update live cells
+ 		Set<Coord> newLives = new HashSet<>();
+ 		for(Map.Entry<Coord, Integer> entry : neighbours.entrySet()){
+ 			Coord key = entry.getKey();
+ 			int value = entry.getValue();
+
+ 			if(lives.contains(key) && (value == 2 || value == 3)) 
+ 				newLives.add(key);
+ 			if(!lives.contains(key) && value == 3)
+ 				newLives.add(key);
+ 		}
+
+ 		return newLives;
+ 	}
+}
+
+
+291 Word Pattern
+// Difference between 290 and 291:
+// In 291, the matching words are not given, so we need to use a character in the pattern to match different length of substrings 
+//in the input string with backtracking. We keep trying until we go through the the input string and the pattern.
+
+public class Solution{
+	public boolean wordPatternMatch(String pattern, String str){
+        Map<Character, String> hMap = new HashMap<>();
+
+        return isMatch(str, 0, pattern, 0, hMap);
+    }
+
+    private boolean isMatch(String str, int i, String pattern, int j, Map<Character, String> hMap){
+    	if(i == str.length() && j == pattern.length()) return true;
+    	if(i == str.length() || j == pattern.length()) return false;
+
+    	char c = pattern.charAt(j);
+
+    	// If the current pattern character has already been matched to a word
+    	if(hMap.containsKey(c)){
+    		String s = hMap.get(c);
+
+    		// Use this word to match the current substring
+    		if(!str.startsWith(s, i)) return false;
+
+    		// Check whether the rest of the string can be matched
+    		return isMatch(str, i+s.length(), pattern, j+1, hMap);
+    	}
+
+    	// If the current pattern character, use backtracking to try on different substrings
+    	else{
+    		for(int k = i; k < str.length(); k++){
+    			String s = str.substring(i, k+1);
+
+    			if(hMap.containsValue(s)) continue; // We can also keep a hashset here to decrease the rumtime
+
+    			// backtracking
+    			hMap.put(c, s);
+    			if(isMatch(str, k+1, pattern, j+1, hMap)) return true;
+    			hMap.remove(c);
+    		}
+
+    		return false;
+    	}
+    }
+}
+
+362. Design hit counter
+// Idea 1: Using queue
+// Problem: when there are many hits arrving at the same timestamp, queue would take up large amount of memory、
+public class HitCounter{
+	public static final int TIME_WINDOW = 300;
+	private Queue<Integer> q;
+
+	public HitCounter(){
+		q = new LinkedList<>();
+	}
+
+	public void hit(int timestamp){
+		q.offer(timestamp);
+	}
+
+	public int getHits(int timestamp){
+		while(!q.isEmpty() && timestamp - q.peek() >= TIME_WINDOW)
+			q.poll();
+
+		return q.size();
+	}
+}
+
+// Optimize 1: HashMap
+// Use HashMap to record <timestamp, count>, so we do not need to poll to queue every time there is a hit
+public class HitCounter{
+	public static final int TIME_WINDOW = 300;
+
+	// Store the number of hits each timestamp
+	private Map<Integer, Integer> hMap;
+
+	// Store the timestamp of hits in the last 300 secs
+	private Queue<Integer> q;
+
+	public HitCounter(){
+		hMap = new HashMap<>();
+		q = new LinkedList<>();
+	}
+
+	public void hit(int timestamp){
+		if(hMap.containsKey(timestamp)){
+			hMap.put(timestamp, hMap.get(timestamp)+1);
+		}
+		else{
+			hMap.put(timestamp, 1);
+			q.offer(timestamp);
+		}
+	}
+
+	public int getHits(int timestamp){
+		while(!q.isEmpty() && timestamp - q.peek() >= 300){
+			int time = q.poll();
+			hMap.remove(time);
+		}
+
+		int hitCounter = 0;
+		for(int time : q)
+			hitCounter += hMap.get(time);
+
+		return hitCounter;
+	}
+}
+
+// Optimize 2: Array
+// If there are a lot of hits arriving at the same time, use array
+public class HitCounter{
+	public static final int TIME_WINDOW = 300;
+	private int[] times;
+	private int[] hits;
+
+	public HitCounter(){
+		times = new int[TIME_WINDOW];
+		hits = new int[TIME_WINDOW];
+	}
+
+	public void hit(int timestamp){
+		int idx = timestamp % TIME_WINDOW;
+		if(times[idx] == timestamp)	hits[idx]++;
+		else{
+			times[idx] = timestamp;
+			hits[idx] = 1;
+		}
+	}
+
+	public int getHits(int timestamp){
+		int hitCounter = 0;
+
+		for(int i = 0; i < TIME_WINDOW; i++){
+			if(timestamp - times[i] < TIME_WINDOW)
+				hitCounter += hits[i];
+		}
+
+		return hitCounter;
+	}
+
+	public static void main(String[] args){
+		HitCounter hc = new HitCounter();
+		hc.hit(1);
+		hc.hit(2);
+		hc.hit(3);
+		hc.hit(4);
+		hc.hit(300);
+		int res1 = hc.getHits(300);
+		assert res1 == 4;
+		int res2 = hc.getHits(301);
+		assert res2 == 3;
+}
+
+
+// System time stamp: System.currentTimeMillis()
+
+
+379. Design phone directory
+// Easy version: queue + HashSet, O(1) time, O(n) space
+public class PhoneDirectory{
+	private Queue<Integer> queue;
+	private Set<Integer> set;
+	int maxNumbers;
+
+	public PhoneDirectory(int maxNumbers){
+		queue = new LinkedList<>();
+		set = new HashSet<>();
+		this.maxNumbers = maxNumbers;
+
+		for(int i = 0; i < maxNumbers; i++)
+			queue.offer(i);
+	}
+
+	public int get(){
+		if(!queue.isEmpty()){
+			set.add(queue.peek());
+			return queue.poll();
+		}
+
+		else return -1;
+	}
+
+	public boolean check(int number){
+		if(number < 0 || number >= maxNumbers) return false;
+		return !set.contains(number);
+	}
+
+	public void release(int number){
+		if(!set.contains(number)) return;
+		else{
+			set.remove(number);
+			queue.offer(number);
+		}
+	}
+
+	public static void main(String args[]){
+		PhoneDirectory pd = new PhoneDirectory(3);
+
+		assert pd.get() == 0;
+		assert pd.get() == 1;
+		assert pd.check(2);
+		assert pd.get() == 2;
+		assert !pd.check(2);
+		pd.release(2);
+		assert pd.check(2);
+
+		System.out.println("All passed!");
+	}
+}
+
+//<---------------------------------------------------------------------------------------------------------------------------------------------->
+// Bitset: O(n) time, O(1) space
+public class PhoneDirectory{
+	private BitSet bitSet;
+	int maxNumbers;
+	int idx;
+
+	public PhoneDirectory(int maxNumbers){
+		bitSet = new BitSet(maxNumbers);
+		this.maxNumbers = maxNumbers;
+		idx = 0;
+	}
+
+	public int get(){
+		if(idx == maxNumbers) return -1;
+		int num = idx;
+		bitSet.set(num);
+		idx = bitSet.nextClearBit(idx);
+		return num;
+	}
+
+	public boolean check(int number){
+		if(number < 0 || number >= maxNumbers) return false;
+		return !bitSet.get(number);
+	}
+
+	public void release(int number){
+		if(number < 0 || number >= maxNumbers) return;
+		if(!bitSet.get(number)) return;
+
+		bitSet.clear(number);
+		if(number < idx) idx = number;
+	}
+}
+
+
+
+Find duplicate files:
+//Give a directory name (like /user/foo), return a list of files, in full path, under it.
+// For example, we have
+// /user/foo/fil1
+//              /bar
+//                    /file11
+//                    /file12
+//                    /xyz
+//                          /file111
+//                          /file112
+//                          /file113
+
+//For the retured list, identfiy which two files are identical.
+
+// Question: given a file path, find duplicate files in the file system and list their paths in List<List<String>>
+// Duplicate files: files with the same content but different file names
+// Example:
+// root/a 1.txt("abcd") 2.txt("efgh")
+// root/c 3.txt("abcd")
+// root/c/d 4.txt("efgh")
+// Output: [[root/a/1.txt, root/c/3.txt], [root/a/2.txt, root/c/d/4.txt]]
+
+// Idea: Your solution needs to be tackle a couple of problems: obtaining a list of all the files in the file system (e.g. via DFS), binning the lists into 
+// possible matches, repeat via swappable heuristics until your certainty is 100%. (eg size 1st, md5 2nd, byte stream 3rd)
+// 1. parse the whole file system
+//		File class method: boolean isDirectory(), booelan isFile(), String[] list(), long length(), read(buffer, offset, size)
+// 2. Binning the lists into possible matches
+//		1) hashing: MD5, SHA1, SHA256
+//		2) metadata: file size; the first 1kb of data, the second 1kb of data....
+
+//<----------------------------------------------------------------------------------------------------------------------------------->
+// Easy version: obtain the list of all files in the file system and hash them into different groups 
+public class Solution{
+	public List<List<String>> findDuplicates(String path){
+		List<List<String>> res = new ArrayList<>();
+		if(path == null || path.length == 0) return res;
+
+		List<String> filesList = dfs(path); // list all files in the directory
+		Map<String, List<String>> hMap = new HashMap<>(); // map: hash value ---> list of file paths
+
+		// Hashing each file and put it into according bucket in the HashMap
+		for(String f : filesList){
+			File file = new File(f);
+			String hash = getMD5(file);
+
+			if(hMap.containsKey(hash)){
+				List<String> value = hMap.get(hash);
+				value.add(f);
+				hMap.put(hash, value);
+			}
+
+			else{
+				List<String> value = new ArrayList<>();
+				value.add(f);
+				hMap.put(hash, value);
+			}
+		}
+
+		for(List<String> value : hMap.values())
+			if(value.size() > 1)
+				res.add(value);
+
+		return res;
+	}
+
+	// Use dfs to get all the files in the directory, return the path of all files
+	private List<String> dfs(String path){
+		List<String> filesList = new ArrayList<>(); 
+		Stack<String> st = new Stack<>();
+		st.push(path);
+
+		while(!st.empty()){
+			String curPath = st.pop();
+			File file = new File(curPath);
+
+			if(file.isFile()) fileList.add(curPath);
+
+			// File has subdirectories
+			else if(file.isDirectory()){
+				String[] subDir = file.list();
+				for(String s : subDir){
+					String newPath = curPath + "/" + s;
+					st.push(newPath);
+				}
+			}
+		}
+
+		return filesList;
+	}
+}
+
+//<----------------------------------------------------------------------------------------------------------------------------------->
+// Follow up: If the directory only contains a few duplicate files, we still need to search through the whole directory. 
+// MD5 is slow if each file is very large. How can we optimize the above solution?
+// Optimize: use the metadata of the file to first hashing the files and then use MD5 to hash the files.
+public class Solution{
+	public List<List<String>> findDuplicates(String path){
+		List<List<String>> res = new ArrayList<>();
+		if(path == null || path.length == 0) return res;
+
+		List<List<String>> filesList = dfs(path); // files with same file size
+		for(List<String> sameSizeList : filesList){
+		
+		// Iterate through the files with the same size (potentially to be duplicate files)
+		Map<String, List<String>> hMap = new HashMap<>(); // map: hash value ---> list of file paths, hash the files by hash value
+		for(String f : sameSizeList){
+			File file = new File(f);
+			String hash = getMD5(file);
+
+			if(hMap.contains(hash)){
+				List<String> list = hMap.get(hash);
+				list.add(f);
+				hMap.put(hash, list);
+			}
+
+			else{
+				List<String> list = new ArrayList<>();
+				list.add(f);
+				hMap.put(hash, list);
+			}
+		}
+
+		for(List<String> value : hMap.values())
+			if(value.size() > 1)
+				res.add(value);
+		}
+
+		return res;
+	}
+
+	// Private helper function that uses dfs to return the list of all the files in the directory, divided into groups by their sizes.
+	private List<List<String>> dfs(String path){
+		List<List<String>> filesList = new ArrayList<>();
+		Map<Integer, List<String>> hMap = new HashMap<>(); // map: file size ---> list of file paths, hash the files by size
+		Stack<String> st = new Stack<>();
+		st.push(path);
+
+		while(!st.empty()){
+			String curPath = st.pop();
+			File file = new File(curPath);
+
+			if(file.isFile()){
+				long size = file.length();
+				if(hMap.contains(size)){
+					List<String> list = hMap.get(size);
+					list.add(curPath);
+					hMap.put(size, list);
+				}
+
+				else{
+					List<String> list = new ArrayList<>();
+					list.add(curPath);
+					hMap.put(size, list);
+				}
+			}
+
+			else if(file.isDirectory()){
+				String[] subDir = file.list();
+				for(String s : subDir){
+					String newPath = curPath + "/" + s;
+					st.push(newPath); 
+				}
+			}
+		}
+
+		for(List<String> value : hMap.values())
+			if(value.size() > 1)
+				filesList.add(value);
+
+		return filesList;
+	}
+}
+
+//<----------------------------------------------------------------------------------------------------------------------------------->
+// Further optimization: we do not calculate MD5 value of the whole file. Instead we divide the file into blocks of 1kb.
+// First hash the file with MD5 of the first 1kb and then hash by the second 1kb.....and so on.
+File file = new File(path);
+FileInputStream fis = new FileInputStream(file);
+byte[] buffer = new byte[1024];//读1kb
+int rc = fis.read(buffer, 0, 1024);
+while (rc != -1) {
+	hash(buffer);
+	rc = fis.read(buffer);
+}
+
+//<----------------------------------------------------------------------------------------------------------------------------------->
+// Follow up question: Are there any circumstances which could lead to false negative?
+
+
+GRID illumination
+import java.util.*;
+
+public class GridIllumination{
+	private Map<Integer, Integer> rowMap = new HashMap<>();
+	private Map<Integer, Integer> colMap = new HashMap<>();
+	private Map<Integer, Integer> leftDiagMap = new HashMap<>();
+	private Map<Integer, Integer> rightDiagMap = new HashMap<>();
+	private Set<List<Integer>> lampSet = new HashSet<>();
+
+	public List<String> checkIllumination(int n, List<List<Integer>> lamps, List<List<Integer>> queries){
+		List<String> res = new ArrayList<>();
+
+		// Store the lamp coordinates into HashSet and update the lamp count in each coordinate
+		for(List<Integer> lamp : lamps){
+			lampSet.add(lamp);
+			int r = lamp.get(0);
+			int c = lamp.get(1);
+
+			// Update the row lamp count
+			if(!rowMap.containsKey(r)) rowMap.put(r,1);
+			else rowMap.put(r,rowMap.get(r)+1);
+
+			// Update the col lamp count
+			if(!colMap.containsKey(c)) colMap.put(c,1);
+			else colMap.put(c,colMap.get(c)+1);
+
+			// Update the left diagnoal lamp count
+			if(!leftDiagMap.containsKey(r-c)) leftDiagMap.put(r-c,1);
+			else leftDiagMap.put(r-c,leftDiagMap.get(r-c)+1);
+
+			// Update the right diagonal lamp count
+			if(!rightDiagMap.containsKey(r+c)) rightDiagMap.put(r+c,1);
+			else rightDiagMap.put(r+c,rightDiagMap.get(r+c)+1);
+		}
+
+		// Iterate each query and update the lamp count in each map (turn off the lamps)
+		for(List<Integer> query : queries){
+			int r = query.get(0);
+			int c = query.get(1);
+
+			// Iterate through the query itself and its neighbours to turn off the lamps
+			for(int i = r-1; i <= r+1; i++){
+				for(int j = c-1; j <= c+1; j++){
+					if(i >=1 && i <= n && j >= 1 && j <= n){
+						if(lampSet.contains(Arrays.asList(i,j))){
+							rowMap.put(i,rowMap.get(i)-1);
+							colMap.put(j,colMap.get(j)-1);
+							leftDiagMap.put(i-j,leftDiagMap.get(i-j)-1);
+							rightDiagMap.put(i+j,rightDiagMap.get(i+j)-1);
+						}
+					}
+				}
+			}
+
+			// Check whether the grid cell is light or dark after turning off all affected lights
+			if((rowMap.containsKey(r) && rowMap.get(r) != 0) || 
+				colMap.containsKey(c) && colMap.get(c) != 0 ||
+				leftDiagMap.containsKey(r-c) && leftDiagMap.get(r-c) != 0 ||
+				rightDiagMap.containsKey(r+c) && rightDiagMap.get(r+c) != 0)
+				res.add("LIGHT");
+			else
+				res.add("DARK");
+
+
+			// Turn on all the lights after examine the cell
+			for(int i = r-1; i <= r+1; i++){
+				for(int j = c-1; j <= c+1; j++){
+					if(i >=1 && i <= n && j >= 1 && j <= n){
+						if(lampSet.contains(Arrays.asList(i,j))){
+							rowMap.put(i,rowMap.get(i)+1);
+							colMap.put(j,colMap.get(j)+1);
+							leftDiagMap.put(i-j,leftDiagMap.get(i-j)+1);
+							rightDiagMap.put(i+j,rightDiagMap.get(i+j)+1);
+						}
+					}
+				}
+			}
+		}
+		return res;
+	}
+
+	public static void main(String[] args){
+		int n = 8;
+		List<List<Integer>> lamps = new ArrayList<>();
+		lamps.add(Arrays.asList(1,6));
+		lamps.add(Arrays.asList(5,6));
+		lamps.add(Arrays.asList(7,3));
+		lamps.add(Arrays.asList(3,2));
+
+		List<List<Integer>> queries = new ArrayList<>();
+		queries.add(Arrays.asList(4,4));
+		queries.add(Arrays.asList(6,6));
+		queries.add(Arrays.asList(8,1));
+		queries.add(Arrays.asList(3,2));
+		queries.add(Arrays.asList(2,3));
+
+		GridIllumination gd = new GridIllumination();
+		List<String> illumination = gd.checkIllumination(n,lamps,queries);
+		System.out.print(illumination.toString());
+	}
+}
+
+Highest Min Sharpest
+// Given a 2-d array of "sharpness" values. Find a path from the leftmost column to the rightmost column which has the highest minimum sharpness.
+// Output the highest minimum sharpness. Each move can only move to the top right, right or bottom right grid.
+// Example: 3*3 matrix
+// 5 7 2
+// 7 5 8
+// 9 1 5
+// The path with highest minimum sharpness is 7-->7-->8, because 7 is the highest minimum value in all the paths.
+// Idea: Use DP dp[r][c] = min(max(dp[r-1][c-1], dp[r][c-1], dp[r+1][c-1]), grid[r][c])
+
+import java.util.*;
+
+public class Solution{
+	public int highestMinVal(int[][] grid){
+		if(grid == null || grid.length == 0 || grid[0].length == 0) return 0;
+
+		int m = grid.length, n = grid[0].length;
+		int[][] dp = new int[m][n]; // dp stores the highest min value of the path at current position
+
+		for(int r = 0; r < m; r++)
+			// fill the col 0 of dp
+			dp[r][0] = grid[r][0];
+
+		// Iterate from col 1, fill dp
+		for(int c = 1; c < n; c++){
+			for(int r = 0; r < m; r++){
+				int max = 0;
+				for(int i = Math.max(0, r-1); i <= Math.min(m-1, r+1); i++){
+					max = Math.max(max, dp[i][c-1]);
+				}
+
+				// update the highest min value on current position
+				dp[r][c] = Math.min(max, grid[r][c]);
+			}
+		}
+
+		// Find the highest min value of every path
+		int res = 0;
+		for(int r = 0; r < m; r++)
+			res = Math.max(res, dp[r][n-1]);
+
+		return res;
+	}
+
+	public static void main(String[] args){
+		Solution so = new Solution();
+
+		int[][] grid = new int[][]{
+			{5,7,2},
+			{7,5,8},
+			{9,1,5}
+		};
+
+		assert so.highestMinVal(grid) == 7;
+		System.out.println("Success!");
+	}
+}
+
+// Follow up: 
+//如果图片是1million*1million的怎么办，整张图片读不进内存，我答说dp结构可以改成一维的，然后每次只读一列。小哥说每次读一列的第一个字符非常耗时，因为要不断的跳读指针，
+//然后我说可以对这个矩阵转置写到另外一个文件里，然后每次想做这个函数就对这个新文件操作就好了，这样就能按行读。小哥就问我怎么转置再存到另外一个文件里，我说根据内存大小可以多读几列。
+//然后小哥就说还可以再优化，他说这有一个balance，读行输出列，写文件就很耗时，读列输出行，读文件就很耗时（主要问题是 写指针或读指针跳转到下一行 所带来的时间消耗），
+//结果是每次根据内存大小读一个接近正方形的矩形，将他们写到新文件，再读下一块矩形。这样的话，读写指针跳转次数就最小了。
+
