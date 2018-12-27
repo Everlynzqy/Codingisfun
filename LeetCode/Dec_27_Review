@@ -100,6 +100,8 @@ public class Solution {
 
 685. Redundant Connection II
 
+有向图找环 （Union Find）
+
 There are two cases for the tree structure to be invalid.
 1) A node having two parents;
    including corner case: e.g. [[4,2],[1,5],[5,2],[5,3],[2,4]]
