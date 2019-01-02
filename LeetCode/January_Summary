@@ -240,3 +240,92 @@ public int tallestBillboard(int[] rods) {
 
 
 
+2. DP optimization
+750. Number Of Corner Rectangles
+According to the question description, as long as we have two corner points of 
+the upper line of a rectangle and corresponding two corner points of the bottom line, 
+it forms a rectangle. So we can scan each row of the input matrix, every time we 
+find two corner points in this row and treat them as the bottom line of a rectangle, 
+we try to find how many upper lines it can have in the previous scanned lines. 
+Thus, we use a 2D array dp[n][n] to track the number of pairs of corner points 
+before the current row with position in i, j, then the number of rectangles with a bottom 
+line made up of the current two corner points will be dp[i][j]. After that, update dp[i][j] by incrementing one.
+
+class Solution {
+    public int countCornerRectangles(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        int[][] dp = new int[n][n];
+        int res = 0;
+        for(int i = 0;i < m;i++) {
+            for(int j = 0;j < n;j++) {
+                if(grid[i][j] != 1) continue;
+                for(int k = j+1;k < n;k++) {
+                    if(grid[i][k] == 1) {
+                        res += dp[j][k];
+                        dp[j][k]++;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+}
+Time comlexity is O(n3) and space complexity is O(n2)
+
+3. 
+837. New 21 Game
+Alice plays the following game, loosely based on the card game "21".
+
+Alice starts with 0 points, and draws numbers while she has less than K points.  
+During each draw, she gains an integer number of points randomly from the range [1, W], 
+where W is an integer.  Each draw is independent and the outcomes have equal probabilities.
+
+Alice stops drawing numbers when she gets K or more points.  What is the probability that she has N or less points?
+
+Example 1:
+
+Input: N = 10, K = 1, W = 10
+Output: 1.00000
+Explanation:  Alice gets a single card, then stops.
+Example 2:
+
+Input: N = 6, K = 1, W = 10
+Output: 0.60000
+Explanation:  Alice gets a single card, then stops.
+In 6 out of W = 10 possibilities, she is at or below N = 6 points.
+Example 3:
+
+Input: N = 21, K = 17, W = 10
+Output: 0.73278
+Note:
+
+0 <= K <= N <= 10000
+1 <= W <= 10000
+Answers will be accepted as correct if they are within 10^-5 of the correct answer.
+The judging time limit has been reduced for this question.
+
+SOLUTIONS : 
+Climbing stairs
+
+dp[i]: probability of get points i
+dp[i] = sum(last W dp values) / W
+
+To get Wsum = sum(last W dp values), we can maintain a sliding window with size at most K.
+
+public double new21Game(int N, int K, int W) {
+        if (K == 0 || N >= K + W + 1) 	
+		return 1; // corner case ! important
+        double dp[] = new double[N + 1],  Wsum = 1, res = 0;
+        dp[0] = 1;
+        for (int i = 1; i <= N; ++i) {
+            dp[i] = Wsum / W; // cal current dp
+            if (i < K) 
+	    	Wsum += dp[i]; // update Wsum with new window when i < K
+	    else 
+	    	res += dp[i]; // update final result;
+            if (i - W >= 0) 	
+	    	Wsum -= dp[i - W]; // remove old window
+        }
+        return res;
+}
+
