@@ -3,5 +3,6 @@ Pour Water / Cheapest Flights / Alien Dict / Sliding Puzzles / File System / Men
 
 1. Cheapest Flights 
 1) return - mincost path
+["800", "A->B->C"]
 2) input is String
 A->B, 100
